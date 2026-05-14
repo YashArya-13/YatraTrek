@@ -31,6 +31,10 @@ def hotel_list(request):
     if difficulty:
         qs = qs.filter(difficulty=difficulty)
 
+    region = request.GET.get('region')
+    if region:
+        qs = qs.filter(region__icontains=region)
+
     # Sort
     sort = request.GET.get('sort', 'featured')
     if sort == 'price_low':

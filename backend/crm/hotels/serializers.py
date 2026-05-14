@@ -16,6 +16,7 @@ class PackageSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             'id', 'trek', 'camp', 'camp_details', 'package_type', 'package_type_display',
+            'base_camp', 'route_plan',
             'price_per_person', 'max_trekkers',
             'inclusions', 'is_active',
         ]
@@ -45,7 +46,7 @@ class TrekListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'slug', 'region', 'base_camp',
             'difficulty', 'difficulty_display', 'duration_days', 'max_altitude',
-            'amenities', 'images', 'route_plan',
+            'amenities', 'images', 'route_plan', 'weather_info', 'best_season',
             'price_min', 'price_max', 'avg_rating',
             'total_reviews', 'is_featured', 'is_active',
         ]
@@ -66,7 +67,7 @@ class TrekDetailSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'slug', 'region', 'base_camp', 'description',
             'difficulty', 'difficulty_display', 'duration_days', 'max_altitude',
-            'amenities', 'images', 'route_plan',
+            'amenities', 'images', 'route_plan', 'weather_info', 'best_season',
             'price_min', 'price_max', 'avg_rating', 'total_reviews',
             'is_featured', 'is_active',
             'rooms', 'reviews', 'created_at',

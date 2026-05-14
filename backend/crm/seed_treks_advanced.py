@@ -8,18 +8,19 @@ django.setup()
 from hotels.models import Trek, Package, Camp
 
 MOUNTAIN_IMAGES = [
-    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
-    "https://images.unsplash.com/photo-1544198365-f5d60b6d8190",
-    "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
-    "https://images.unsplash.com/photo-1551830820-330a71b99659",
-    "https://images.unsplash.com/photo-1520113526768-ca4051fa781e",
-    "https://images.unsplash.com/photo-1551632811-561732d1e306",
-    "https://images.unsplash.com/photo-1519904981063-b0144230c28e",
-    "https://images.unsplash.com/photo-1544735745-b89b18555f35",
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
-    "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5",
-    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+    "/assets/treks/pindari.png",
+    "/assets/treks/valley.png",
+    "/assets/treks/kedarkantha.png",
+    "/assets/treks/view1.png",
+    "/assets/treks/view2.png",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1544198365-f5d60b6d8190?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1551830820-330a71b99659?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1520113526768-ca4051fa781e?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&q=80&w=1200",
+    "https://images.unsplash.com/photo-1519904981063-b0144230c28e?auto=format&fit=crop&q=80&w=1200",
 ]
 
 def seed_treks():
@@ -56,8 +57,10 @@ def seed_treks():
             "difficulty": "difficult",
             "duration_days": 7,
             "max_altitude": 3660,
+            "best_season": "April - June, Sept - Oct",
+            "weather": {"temp": "-5°C to 15°C", "condition": "Partly Cloudy", "humidity": "60%"},
             "amenities": ["Certified Guide", "High Altitude Tents", "Oxygen Cylinders", "All Meals"],
-            "images": [MOUNTAIN_IMAGES[0], MOUNTAIN_IMAGES[1]],
+            "images": [MOUNTAIN_IMAGES[0], MOUNTAIN_IMAGES[3], MOUNTAIN_IMAGES[4]],
             "route_plan": [
                 {"day": 1, "title": "Loharkhet to Dhakuri", "desc": "11km trek through dense forest."},
                 {"day": 2, "title": "Dhakuri to Khati", "desc": "Gentle descent followed by a riverside walk."},
@@ -76,8 +79,10 @@ def seed_treks():
             "difficulty": "moderate",
             "duration_days": 6,
             "max_altitude": 4329,
+            "best_season": "July - August",
+            "weather": {"temp": "7°C to 18°C", "condition": "Misty/Rainy", "humidity": "85%"},
             "amenities": ["Luxury Camping", "Flower Expert Guide", "Pony Support", "Kitchen Team"],
-            "images": [MOUNTAIN_IMAGES[2], MOUNTAIN_IMAGES[3]],
+            "images": [MOUNTAIN_IMAGES[1], MOUNTAIN_IMAGES[5], MOUNTAIN_IMAGES[6]],
             "route_plan": [
                 {"day": 1, "title": "Govindghat to Ghangaria", "desc": "13km trek alongside the Lakshman Ganga river."},
                 {"day": 2, "title": "Explore Valley of Flowers", "desc": "Spend the day amidst thousands of blooming flowers."},
@@ -95,8 +100,10 @@ def seed_treks():
             "difficulty": "easy",
             "duration_days": 6,
             "max_altitude": 3800,
+            "best_season": "December - February",
+            "weather": {"temp": "-10°C to 8°C", "condition": "Snowy", "humidity": "50%"},
             "amenities": ["Snow Gear", "Gaiters & Spikes", "Warm Meals", "First Aid"],
-            "images": [MOUNTAIN_IMAGES[4], MOUNTAIN_IMAGES[5]],
+            "images": [MOUNTAIN_IMAGES[2], MOUNTAIN_IMAGES[7], MOUNTAIN_IMAGES[8]],
             "route_plan": [
                 {"day": 1, "title": "Drive to Sankri", "desc": "Scenic 8-hour drive from Dehradun."},
                 {"day": 2, "title": "Sankri to Juda-ka-Talab", "desc": "Trek through pine forests to a frozen lake."},
@@ -432,6 +439,8 @@ def seed_treks():
             difficulty=t_data["difficulty"],
             duration_days=t_data["duration_days"],
             max_altitude=t_data["max_altitude"],
+            best_season=t_data.get("best_season", "April - June"),
+            weather_info=t_data.get("weather", {"temp": "12°C", "condition": "Sunny", "humidity": "40%"}),
             amenities=t_data["amenities"],
             images=t_data.get("images", []),
             route_plan=t_data.get("route_plan", []),
@@ -443,21 +452,39 @@ def seed_treks():
         # Add packages from different camps
         selected_camps = random.sample(camps, k=random.randint(2, 4))
         for camp in selected_camps:
+            # Vary the route slightly for each camp to show difference
+            camp_route = []
+            for day in t_data.get("route_plan", []):
+                # Add camp specific note to first and last day
+                if day["day"] == 1:
+                    day_copy = day.copy()
+                    day_copy["desc"] = f"[{camp.name} Style] " + day_copy["desc"]
+                    camp_route.append(day_copy)
+                else:
+                    camp_route.append(day)
+
             # Standard package for this camp
             Package.objects.create(
                 trek=trek,
                 camp=camp,
                 package_type='standard',
+                base_camp=t_data["base_camp"],
+                route_plan=camp_route,
                 price_per_person=random.randint(8000, 15000),
                 max_trekkers=20,
                 inclusions=["Camp Stay", "Guide", "Local Meals", "Permits"]
             )
             # Occasional luxury package for this camp
             if random.random() > 0.6:
+                luxury_route = [d.copy() for d in camp_route]
+                luxury_route[0]["desc"] = "Luxury pickup and " + luxury_route[0]["desc"]
+                
                 Package.objects.create(
                     trek=trek,
                     camp=camp,
                     package_type='luxury',
+                    base_camp=t_data["base_camp"],
+                    route_plan=luxury_route,
                     price_per_person=random.randint(18000, 30000),
                     max_trekkers=8,
                     inclusions=["Swiss Tents", "Elite Guide", "Buffet", "Equipment Kit"]

@@ -27,6 +27,9 @@ class Trek(models.Model):
                                  help_text='Inclusions: ["Guide","Equipment","Meals"]')
     images = models.JSONField(default=list, blank=True,
                               help_text='List of adventure image URLs')
+    weather_info = models.JSONField(default=dict, blank=True,
+                                   help_text='Average weather: {"temp": "5°C", "condition": "Sunny", "humidity": "45%"}')
+    best_season = models.CharField(max_length=100, default='April - June', help_text="e.g. Sept - Nov")
     price_min = models.FloatField(default=0, help_text='Starting price per person')
     price_max = models.FloatField(default=0)
     avg_rating = models.FloatField(default=0)
@@ -93,6 +96,8 @@ class Package(models.Model):
     trek = models.ForeignKey(Trek, on_delete=models.CASCADE, related_name='rooms')
     camp = models.ForeignKey(Camp, on_delete=models.SET_NULL, null=True, blank=True, related_name='packages')
     package_type = models.CharField(max_length=30, choices=PACKAGE_TYPES, default='standard')
+    base_camp = models.CharField(max_length=255, default='', blank=True)
+    route_plan = models.JSONField(default=list, blank=True, help_text='Package specific itinerary')
     price_per_person = models.FloatField()
     max_trekkers = models.IntegerField(default=15)
     inclusions = models.JSONField(default=list, blank=True)

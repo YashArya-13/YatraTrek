@@ -47,7 +47,7 @@ const TrekCard = ({ trek, delay }) => {
           <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
              <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>🏔️ {trek.max_altitude}m</div>
              <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>⏱️ {trek.duration_days} Days</div>
-             <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>🏕️ {trek.base_camp}</div>
+             <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>🗓️ {trek.best_season}</div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
             {(trek.amenities || []).slice(0, 6).map((a, i) => (
@@ -93,6 +93,7 @@ export default function HotelListing() {
   const [filters, setFilters] = useState({
     sort: searchParams.get("sort") || "featured",
     difficulty: searchParams.get("difficulty") || "",
+    region: searchParams.get("region") || "",
   });
 
   const city = searchParams.get("city") || "";
@@ -103,6 +104,7 @@ export default function HotelListing() {
     if (city) params.set("city", city);
     if (filters.sort) params.set("sort", filters.sort);
     if (filters.difficulty) params.set("difficulty", filters.difficulty);
+    if (filters.region) params.set("region", filters.region);
 
     api.get(`hotels/?${params.toString()}`).then(r => {
       setTreks(r.data.results || []);
@@ -120,11 +122,23 @@ export default function HotelListing() {
         <aside style={{ position: "sticky", top: "120px", height: "fit-content" }}>
           <div style={{ marginBottom: "40px" }}>
             <h1 style={{ fontSize: "40px", fontWeight: 950, letterSpacing: "-2px", marginBottom: "8px" }}>Treks</h1>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "15px" }}>{treks.length} expeditions found {city ? `in ${city}` : ""}</p>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "15px" }}>{treks.length} expeditions found</p>
           </div>
 
           <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "24px", padding: "30px" }}>
             <div style={{ marginBottom: "30px" }}>
+              <label style={{ fontSize: "10px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "2px", color: "#f97316", display: "block", marginBottom: "12px" }}>Region</label>
+              <select 
+                value={filters.region} 
+                onChange={e => setFilters({ ...filters, region: e.target.value })}
+                style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "#fff", fontSize: "14px", outline: "none", marginBottom: "20px" }}
+              >
+                <option value="">All Regions</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="Himachal">Himachal</option>
+                <option value="Ladakh">Ladakh</option>
+              </select>
+
               <label style={{ fontSize: "10px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "2px", color: "#f97316", display: "block", marginBottom: "12px" }}>Difficulty</label>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {[
