@@ -6,30 +6,30 @@ import toast from "react-hot-toast";
 export default function BookingPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const hotelId = searchParams.get("hotel");
+  const trekId = searchParams.get("trek");
   const roomId = searchParams.get("room");
   const [dates, setDates] = useState({
     checkIn: searchParams.get("check_in") || new Date().toISOString().split('T')[0],
     checkOut: searchParams.get("check_out") || ""
   });
 
-  const [hotel, setHotel] = useState(null);
+  const [trek, setTrek] = useState(null);
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [guest, setGuest] = useState({ name: "", email: "", phone: "", requests: "", trekkers: 1 });
 
   useEffect(() => {
-    if (!hotelId || !roomId) {
-      console.error("Missing hotelId or roomId");
+    if (!trekId || !roomId) {
+      console.error("Missing trekId or roomId");
       navigate("/");
       return;
     }
     Promise.all([
-      api.get(`hotels/${hotelId}/`),
-      api.get(`hotels/packages/${roomId}/`)
+      api.get(`treks/${trekId}/`),
+      api.get(`treks/packages/${roomId}/`)
     ]).then(([hRes, rRes]) => {
-      setHotel(hRes.data);
+      setTrek(hRes.data);
       setRoom(rRes.data);
       
       // Calculate initial checkout if not provided
@@ -47,11 +47,19 @@ export default function BookingPage() {
       console.error("Error loading booking data:", err);
       navigate("/");
     });
-  }, [hotelId, roomId, navigate]);
+  }, [trekId, roomId, navigate]);
 
   const handleStartDateChange = (val) => {
-    const duration = hotel.duration_days || 5;
+    if (!val) {
+      setDates({ checkIn: "", checkOut: "" });
+      return;
+    }
+    const duration = trek?.duration_days || 5;
     const start = new Date(val);
+    if (isNaN(start.getTime())) {
+      setDates({ checkIn: val, checkOut: "" });
+      return;
+    }
     const end = new Date(start.getTime() + 86400000 * duration);
     setDates({
       checkIn: val,
@@ -63,8 +71,8 @@ export default function BookingPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await api.post("hotels/book/", {
-        hotel_id: hotelId,
+      const res = await api.post("treks/book/", {
+        trek_id: trekId,
         room_id: roomId,
         guest_name: guest.name,
         guest_email: guest.email,
@@ -148,17 +156,17 @@ export default function BookingPage() {
             <h3 style={{ fontSize: "20px", fontWeight: "900", marginBottom: "30px", letterSpacing: "-0.5px" }}>Expedition Summary</h3>
             
             <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
-              <img src={hotel.images?.[0]} alt="" style={{ width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" }} />
+              <img src={trek.images?.[0]} alt="" style={{ width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" }} />
               <div>
-                <div style={{ fontSize: "16px", fontWeight: "800", color: "#fff" }}>{hotel.name}</div>
-                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>{room.package_type_display} · {hotel.duration_days} Days</div>
+                <div style={{ fontSize: "16px", fontWeight: "800", color: "#fff" }}>{trek.name}</div>
+                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>{room.package_type_display} · {trek.duration_days} Days</div>
               </div>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "30px", padding: "20px 0", borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                <div style={{ display: "flex", justifyContent: "space-between" }}>
                  <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>Region</span>
-                 <span style={{ fontSize: "14px", fontWeight: "700" }}>{hotel.region}</span>
+                 <span style={{ fontSize: "14px", fontWeight: "700" }}>{trek.region}</span>
                </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>Dates</span>

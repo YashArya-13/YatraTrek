@@ -19,4 +19,4 @@ class ProductViewSet(ModelViewSet):
         if user.role == 'camp_leader' and user.camp:
             serializer.save(camp=user.camp)
         else:
-            serializer.save()
+            serializer.save()

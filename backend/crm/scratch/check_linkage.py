@@ -4,7 +4,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
-from hotels.models import Booking
+from treks.models import Booking
 
 print("--- Booking-Lead Linkage ---")
 for b in Booking.objects.all():

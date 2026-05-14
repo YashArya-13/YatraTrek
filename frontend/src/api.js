@@ -11,10 +11,10 @@ api.interceptors.request.use(config => {
   // Public endpoints that don't need auth
   const isPublic = url.includes("login/")
     || url.includes("public-lead")
-    || (url.includes("hotels/") && config.method === "get" && !url.includes("dashboard/") && !url.includes("hotels/admin/"))
-    || url.includes("hotels/packages/")
-    || url.includes("hotels/book/")
-    || url.includes("hotels/booking/")
+    || (url.includes("treks/") && config.method === "get" && !url.includes("dashboard/") && !url.includes("treks/admin/"))
+    || url.includes("treks/packages/")
+    || url.includes("treks/book/")
+    || url.includes("treks/booking/")
     || url.includes("popular-cities");
 
   if (token && !isPublic) {

@@ -6,11 +6,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
 from leads.models import Lead
-from hotels.models import Booking
+from treks.models import Booking
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIRequestFactory, force_authenticate
 from leads.views import LeadViewSet
-from hotels.views import BookingAdminViewSet
+from treks.views import BookingAdminViewSet
 
 User = get_user_model()
 admin = User.objects.get(username='admin')
@@ -28,7 +28,7 @@ if response.status_code == 200:
     print(f"First Lead: {json.dumps(response.data[0], indent=2) if response.data else 'None'}")
 
 print("\n--- Testing BookingAdminViewSet (admin) ---")
-request = factory.get('/api/hotels/admin/bookings/')
+request = factory.get('/api/treks/admin/bookings/')
 force_authenticate(request, user=admin)
 view = BookingAdminViewSet.as_view({'get': 'list'})
 response = view(request)

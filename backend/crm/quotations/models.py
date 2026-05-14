@@ -4,7 +4,7 @@ from products.models import Product
 
 
 class Quotation(models.Model):
-    camp = models.ForeignKey('hotels.Camp', on_delete=models.CASCADE, related_name='quotations', null=True, blank=True)
+    camp = models.ForeignKey('treks.Camp', on_delete=models.CASCADE, related_name='quotations', null=True, blank=True)
     customer = models.ForeignKey(
         Lead, on_delete=models.SET_NULL, null=True, blank=True, related_name='quotations'
     )

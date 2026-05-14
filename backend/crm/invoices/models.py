@@ -17,4 +17,4 @@ class Invoice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"INV-{str(self.id).zfill(4)}"
+        return f"INV-{str(self.id).zfill(4)}"

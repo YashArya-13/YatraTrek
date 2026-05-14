@@ -19,7 +19,7 @@ class Lead(models.Model):
         on_delete=models.CASCADE,
         null=True, blank=True
     )
-    camp = models.ForeignKey('hotels.Camp', on_delete=models.SET_NULL, null=True, blank=True, related_name='leads')
+    camp = models.ForeignKey('treks.Camp', on_delete=models.SET_NULL, null=True, blank=True, related_name='leads')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

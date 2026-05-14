@@ -29,7 +29,7 @@ const PublicNav = ({ activeItem }) => {
 
       {/* Desktop Menu */}
       <div className="nav-links desktop-only" style={{ display: "flex", gap: "40px" }}>
-        {["Expeditions", "About", "Safety", "Journal"].map(item => (
+        {["Expeditions", "About", "Safety", "Journal", "Partner"].map(item => (
           <span 
             key={item} 
             className="nav-link"
@@ -45,6 +45,8 @@ const PublicNav = ({ activeItem }) => {
                   } else {
                       navigate("/#expeditions");
                   }
+              } else if (item === "Partner") {
+                  navigate("/partner-registration");
               } else {
                   navigate(`/${item.toLowerCase()}`);
               }
@@ -89,7 +91,7 @@ const PublicNav = ({ activeItem }) => {
         pointerEvents: isMobileMenuOpen ? "all" : "none",
         transform: isMobileMenuOpen ? "translateY(0)" : "translateY(-10px)"
       }}>
-        {["Expeditions", "About", "Safety", "Journal"].map(item => (
+        {["Expeditions", "About", "Safety", "Journal", "Partner"].map(item => (
           <span 
             key={item} 
             className="display-3"
@@ -101,6 +103,8 @@ const PublicNav = ({ activeItem }) => {
                 } else {
                   navigate("/#expeditions");
                 }
+              } else if (item === "Partner") {
+                navigate("/partner-registration");
               } else {
                 navigate(`/${item.toLowerCase()}`);
               }

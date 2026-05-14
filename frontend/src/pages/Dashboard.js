@@ -33,7 +33,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("hotels/dashboard/")
+    api.get("treks/dashboard/")
       .then(res => {
         const d = res.data;
         setStats({

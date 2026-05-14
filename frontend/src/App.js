@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import HotelLanding from "./pages/HotelLanding"; // Reusing file, internal rename
-import HotelListing from "./pages/HotelListing";
-import HotelDetail from "./pages/HotelDetail";
+import TrekLanding from "./pages/TrekLanding";
+import TrekListing from "./pages/TrekListing";
+import TrekDetail from "./pages/TrekDetail";
 import BookingPage from "./pages/BookingPage";
 import BookingStatus from "./pages/BookingStatus";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import HotelDashboard from "./pages/HotelDashboard";
+import CampDashboard from "./pages/CampDashboard";
 import Leads from "./pages/Leads";
 import Bookings from "./pages/Bookings";
 import Products from "./pages/Products";
@@ -20,6 +20,7 @@ import Tasks from "./pages/Tasks";
 import About from "./pages/About";
 import Safety from "./pages/Safety";
 import Journal from "./pages/Journal";
+import PartnerRegistration from "./pages/PartnerRegistration";
 
 import Layout from "./components/Layout";
 import ProtectedRoute from "./ProtectedRoute";
@@ -30,12 +31,13 @@ function App() {
       <Routes>
 
         {/* Public Adventure Routes */}
-        <Route path="/" element={<HotelLanding />} />
-        <Route path="/treks" element={<HotelListing />} />
-        <Route path="/hotel/:id" element={<HotelDetail />} />
+        <Route path="/" element={<TrekLanding />} />
+        <Route path="/treks" element={<TrekListing />} />
+        <Route path="/trek/:id" element={<TrekDetail />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/booking-status/:ref" element={<BookingStatus />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/partner-registration" element={<PartnerRegistration />} />
         <Route path="/about" element={<About />} />
         <Route path="/safety" element={<Safety />} />
         <Route path="/journal" element={<Journal />} />
@@ -47,9 +49,9 @@ function App() {
           </ProtectedRoute>
         } />
 
-        <Route path="/hotel-dashboard" element={
+        <Route path="/trek-dashboard" element={
           <ProtectedRoute>
-            <Layout><HotelDashboard /></Layout>
+            <Layout><CampDashboard /></Layout>
           </ProtectedRoute>
         } />
 

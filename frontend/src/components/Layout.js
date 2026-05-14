@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { name: "Mission Control", path: "/dashboard", icon: "🚀", role: "admin" },
-    { name: "Expeditions", path: "/hotel-dashboard", icon: "🏔️" },
+    { name: "Expeditions", path: "/trek-dashboard", icon: "🏔️" },
     { name: "Bookings", path: "/bookings", icon: "📅" },
     { name: "Lead Pipeline", path: "/leads", icon: "🎯" },
     { name: "Trekkers", path: "/trekkers", icon: "👤" },

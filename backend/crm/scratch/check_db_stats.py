@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
 from leads.models import Lead
-from hotels.models import Booking, Trek, Camp
+from treks.models import Booking, Trek, Camp
 from django.contrib.auth import get_user_model
 
 User = get_user_model()

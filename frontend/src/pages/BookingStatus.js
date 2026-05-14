@@ -11,7 +11,7 @@ export default function BookingStatus() {
   const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
-    api.get(`hotels/booking/${ref}/`).then(r => {
+    api.get(`treks/booking/${ref}/`).then(r => {
       setBooking(r.data);
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -21,7 +21,7 @@ export default function BookingStatus() {
     if (!window.confirm("Are you sure you want to cancel this luxury booking?")) return;
     setCancelling(true);
     try {
-      const res = await api.post(`hotels/booking/${ref}/cancel/`);
+      const res = await api.post(`treks/booking/${ref}/cancel/`);
       setBooking(res.data);
       toast.success("Booking Cancelled");
     } catch (err) {
@@ -58,10 +58,10 @@ export default function BookingStatus() {
            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "32px", padding: "40px" }}>
               <h3 style={{ fontSize: "12px", fontWeight: "900", color: "#f97316", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "24px" }}>Property Details</h3>
               <div style={{ display: "flex", gap: "20px", marginBottom: "24px" }}>
-                 <img src={booking.hotel_image} alt="" style={{ width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" }} />
+                 <img src={booking.trek_image} alt="" style={{ width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" }} />
                  <div>
-                    <div style={{ fontSize: "18px", fontWeight: "800" }}>{booking.hotel_name}</div>
-                    <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>{booking.hotel_city}</div>
+                    <div style={{ fontSize: "18px", fontWeight: "800" }}>{booking.trek_name}</div>
+                    <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>{booking.trek_city}</div>
                  </div>
               </div>
               <div style={{ fontSize: "14px", fontWeight: "700", color: "#fff", padding: "12px 16px", background: "rgba(255,255,255,0.05)", borderRadius: "12px" }}>

@@ -9,4 +9,4 @@ class User(AbstractUser):
         ('camp_leader', 'Camp Leader'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='sales')
-    camp = models.ForeignKey('hotels.Camp', on_delete=models.SET_NULL, null=True, blank=True, related_name='leaders')
+    camp = models.ForeignKey('treks.Camp', on_delete=models.SET_NULL, null=True, blank=True, related_name='leaders')

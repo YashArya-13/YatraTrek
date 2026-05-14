@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
 from users.models import User
-from hotels.models import Camp
+from treks.models import Camp
 
 count = 0
 for camp in Camp.objects.all():

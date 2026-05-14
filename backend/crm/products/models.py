@@ -9,7 +9,7 @@ class Product(models.Model):
         ('insurance', 'Insurance'),
         ('other', 'Other'),
     ]
-    camp = models.ForeignKey('hotels.Camp', on_delete=models.CASCADE, related_name='products', null=True, blank=True)
+    camp = models.ForeignKey('treks.Camp', on_delete=models.CASCADE, related_name='products', null=True, blank=True)
     name = models.CharField(max_length=255)
     price = models.FloatField()
     description = models.TextField(blank=True, default='')
@@ -22,4 +22,4 @@ class Product(models.Model):
         return round(self.price * (1 - self.discount_pct / 100), 2)
 
     def __str__(self):
-        return f"{self.name} ({self.camp.name if self.camp else 'Global'})"
+        return f"{self.name} ({self.camp.name if self.camp else 'Global'})"

@@ -23,7 +23,7 @@ export default function Users() {
   };
 
   const fetchCamps = async () => {
-    try { const res = await api.get("hotels/admin/camps/"); setCamps(res.data); } catch {}
+    try { const res = await api.get("treks/admin/camps/"); setCamps(res.data); } catch {}
   };
 
   const openAddModal = () => {

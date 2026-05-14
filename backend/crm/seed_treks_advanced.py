@@ -5,7 +5,7 @@ import random
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
-from hotels.models import Trek, Package, Camp
+from treks.models import Trek, Package, Camp
 
 MOUNTAIN_IMAGES = [
     "/assets/treks/pindari.png",

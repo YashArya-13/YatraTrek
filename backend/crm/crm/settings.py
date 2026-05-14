@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'invoices',
     'reports',
     'tasks',
-    'hotels',
+    'treks',
 ]
 
 MIDDLEWARE = [

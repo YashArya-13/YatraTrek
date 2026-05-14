@@ -12,7 +12,7 @@ export default function Trekkers() {
   const fetchTrekkers = async () => {
     setLoading(true);
     try {
-      const res = await api.get("hotels/admin/bookings/");
+      const res = await api.get("treks/admin/bookings/");
       setTrekkers(res.data);
     } catch (err) {
       console.error(err);

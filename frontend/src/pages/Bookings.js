@@ -12,7 +12,7 @@ export default function Bookings() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const res = await api.get("hotels/admin/bookings/");
+      const res = await api.get("treks/admin/bookings/");
       setBookings(res.data);
     } catch (err) {
       console.error(err);
@@ -23,7 +23,7 @@ export default function Bookings() {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await api.patch(`hotels/admin/bookings/${id}/`, { status: newStatus });
+      await api.patch(`treks/admin/bookings/${id}/`, { status: newStatus });
       fetchBookings();
     } catch (err) {
       alert("Failed to update status");
@@ -61,9 +61,8 @@ export default function Bookings() {
           <thead>
             <tr>
               <th>ID & Reference</th>
-              <th>Primary Trekker</th>
+              <th>Trekker Details & Comms</th>
               <th>Assigned Expedition</th>
-              <th>Base Camp</th>
               <th>Deployment Window</th>
               <th>Total Net</th>
               <th>Current Status</th>
@@ -73,7 +72,7 @@ export default function Bookings() {
           <tbody>
             {bookings.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ padding: 100, textAlign: "center" }}>
+                <td colSpan="7" style={{ padding: 100, textAlign: "center" }}>
                    <div style={{ fontSize: 48, marginBottom: 16 }}>⛺</div>
                    <div style={{ fontWeight: 800, fontSize: 18, color: "#fff" }}>No Reservations Logged</div>
                    <p style={{ color: "var(--text-muted)" }}>The expedition registry is currently empty.</p>
@@ -83,30 +82,44 @@ export default function Bookings() {
               bookings.map((b, i) => (
                 <tr key={b.id} style={{ animation: `fadeIn 0.5s ease-out forwards ${i * 0.05}s`, opacity: 0 }}>
                   <td>
-                    <div style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 800, color: "var(--accent-primary)", background: "rgba(249,115,22,0.1)", padding: "4px 8px", borderRadius: 6, display: "inline-block" }}>
+                    <div style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 800, color: "var(--accent-primary)", background: "rgba(245,158,11,0.1)", padding: "4px 8px", borderRadius: 6, display: "inline-block", marginBottom: "8px" }}>
                       {b.booking_ref}
                     </div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Booked: {new Date(b.created_at).toLocaleDateString()}</div>
                   </td>
                   <td>
-                    <div style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{b.guest_name}</div>
-                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{b.guest_email}</div>
+                    <div style={{ fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: "4px" }}>
+                       {b.guest_name} 
+                       <span style={{ fontSize: 11, fontWeight: 800, color: "var(--bg-primary)", background: "var(--accent-secondary)", padding: "2px 6px", borderRadius: "4px", marginLeft: "8px" }}>
+                         {b.trekkers_count} Pax
+                       </span>
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: "4px" }}>✉️ {b.guest_email}</div>
+                    {b.guest_phone && (
+                      <div style={{ fontSize: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                         <span style={{ color: "var(--text-muted)" }}>📞 {b.guest_phone}</span>
+                         <a href={`https://wa.me/${b.guest_phone.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{ color: "#25D366", textDecoration: "none", fontWeight: "700", background: "rgba(37,211,102,0.1)", padding: "2px 6px", borderRadius: "4px" }}>WhatsApp</a>
+                      </div>
+                    )}
                   </td>
                   <td>
-                    <div style={{ fontWeight: 700, color: "#e2e8f0" }}>{b.trek_name}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>Batch #B-{String(b.id).padStart(3,'0')}</div>
-                  </td>
-                  <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#f97316", fontWeight: 800, fontSize: 13 }}>
+                    <div style={{ fontWeight: 700, color: "#e2e8f0", marginBottom: "4px" }}>{b.trek_name}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--accent-primary)", fontWeight: 800, fontSize: 12, marginBottom: "8px" }}>
                       <span>⛺</span> {b.camp_name || "Unassigned"}
                     </div>
+                    {b.special_requests && (
+                      <div style={{ fontSize: 11, color: "var(--warning)", background: "rgba(245,158,11,0.05)", padding: "6px", borderRadius: "6px", border: "1px solid rgba(245,158,11,0.2)" }}>
+                         <strong>Notes:</strong> {b.special_requests}
+                      </div>
+                    )}
                   </td>
                   <td>
-                    <div style={{ fontSize: 13, color: "#fff", fontWeight: 600 }}>{b.check_in || "TBD"}</div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Arrival Date</div>
+                    <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, marginBottom: "4px" }}>IN: {b.check_in || "TBD"}</div>
+                    <div style={{ fontSize: 13, color: "var(--text-muted)" }}>OUT: {b.check_out || "TBD"}</div>
                   </td>
                   <td>
                     <div style={{ fontSize: 16, fontWeight: 900, color: "var(--accent-primary)" }}>₹{(b.total_price || 0).toLocaleString()}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--success)" }}>PAID IN FULL</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--success)", background: "rgba(16,185,129,0.1)", padding: "2px 6px", borderRadius: "4px", display: "inline-block", marginTop: "4px" }}>PAID IN FULL</div>
                   </td>
                   <td>
                     <span className={`badge badge-${getStatusClass(b.status)}`}>{b.status_display}</span>
@@ -114,15 +127,15 @@ export default function Bookings() {
                   <td>
                     <select 
                       className="form-control"
-                      style={{ padding: "8px 12px", fontSize: 11, width: 130, borderRadius: 10 }}
+                      style={{ padding: "8px 12px", fontSize: 12, width: 140, borderRadius: 10, background: "rgba(255,255,255,0.05)", border: "1px solid var(--border)", color: "#fff", fontWeight: 600 }}
                       value={b.status}
                       onChange={(e) => handleStatusChange(b.id, e.target.value)}
                     >
-                      <option value="pending">⏳ Pending</option>
-                      <option value="confirmed">✅ Confirmed</option>
-                      <option value="on_trek">🏔️ On Trek</option>
-                      <option value="completed">🏆 Completed</option>
-                      <option value="cancelled">❌ Cancelled</option>
+                      <option value="pending" style={{ color: "#000" }}>⏳ Pending</option>
+                      <option value="confirmed" style={{ color: "#000" }}>✅ Confirmed</option>
+                      <option value="on_trek" style={{ color: "#000" }}>🏔️ On Trek</option>
+                      <option value="completed" style={{ color: "#000" }}>🏆 Completed</option>
+                      <option value="cancelled" style={{ color: "#000" }}>❌ Cancelled</option>
                     </select>
                   </td>
                 </tr>

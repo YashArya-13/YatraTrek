@@ -5,7 +5,7 @@ import json
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
-from hotels.models import Trek
+from treks.models import Trek
 
 print("TREK DATA CHECK:")
 for t in Trek.objects.all()[:5]:

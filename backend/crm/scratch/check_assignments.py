@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
 from django.contrib.auth import get_user_model
-from hotels.models import Camp
+from treks.models import Camp
 
 User = get_user_model()
 

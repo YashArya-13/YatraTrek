@@ -7,7 +7,7 @@ sys.path.append('d:\\Yash projects\\crm_project\\backend\\crm')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
-from hotels.models import Trek, Package
+from treks.models import Trek, Package
 
 def seed():
     # Clear existing

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, login, me
+from .views import UserViewSet, login, me, register_camp_owner
 
 router = DefaultRouter()
 router.register('', UserViewSet, basename='user')
@@ -8,5 +8,6 @@ router.register('', UserViewSet, basename='user')
 urlpatterns = [
     path('login/', login),
     path('me/', me),
+    path('register-camp/', register_camp_owner),
     path('', include(router.urls)),
 ]
