@@ -6,6 +6,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crm.settings')
 django.setup()
 
 from treks.models import Trek, Package, Camp
+from users.models import User
 
 MOUNTAIN_IMAGES = [
     "/assets/treks/pindari.png",
@@ -27,6 +28,16 @@ def seed_treks():
     Trek.objects.all().delete()
     Camp.objects.all().delete()
     
+    # Create Superuser
+    if not User.objects.filter(username='admin').exists():
+        print("Creating superuser 'admin'...")
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@yatratrek.com',
+            password='admin123',
+            role='admin'
+        )
+    
     # Create Camps
     CAMPS_DATA = [
         {"name": "Himalayan Explorers", "specialty": "Elite Mountaineering", "rating": 4.9},
@@ -46,6 +57,19 @@ def seed_treks():
             description=f"Leading expeditions since {2026 - random.randint(10,25)}. Certified IFMGA/UIAGM leadership."
         )
         camps.append(camp)
+
+    # Create Camp Leader Users
+    for camp in camps:
+        username = f"{camp.name.lower().replace(' ', '_')}_admin"
+        if not User.objects.filter(username=username).exists():
+            print(f"Creating camp leader '{username}'...")
+            User.objects.create_user(
+                username=username,
+                email=f"admin@{camp.name.lower().replace(' ', '')}.com",
+                password='password123',
+                role='camp_leader',
+                camp=camp
+            )
 
     TREKS = [
         # Uttarakhand
