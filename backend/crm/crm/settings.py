@@ -18,6 +18,9 @@ def load_env():
 load_env()
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 SECRET_KEY = 'django-secret-key'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
