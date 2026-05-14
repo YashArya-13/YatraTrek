@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+
 
 export default function Quotations() {
   const [products, setProducts] = useState([]);

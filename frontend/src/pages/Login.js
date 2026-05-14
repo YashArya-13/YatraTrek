@@ -180,7 +180,7 @@ const Login = () => {
             </form>
 
             <div style={{ marginTop: "32px", textAlign: "center", display: "flex", flexDirection: "column", gap: "12px" }}>
-               <a href="#" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", textDecoration: "none", fontWeight: 700 }}>Request Access Recovery 🛰️</a>
+               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", textDecoration: "none", fontWeight: 700, cursor: "pointer" }}>Request Access Recovery 🛰️</span>
                <div 
                   onClick={() => navigate("/partner-registration")}
                   style={{ color: "#f97316", fontSize: "14px", fontWeight: "900", cursor: "pointer", textTransform: "uppercase", letterSpacing: "1px" }}

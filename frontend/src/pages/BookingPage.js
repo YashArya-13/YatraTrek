@@ -47,7 +47,7 @@ export default function BookingPage() {
       console.error("Error loading booking data:", err);
       navigate("/");
     });
-  }, [trekId, roomId, navigate]);
+  }, [trekId, roomId, navigate, dates.checkIn, searchParams]);
 
   const handleStartDateChange = (val) => {
     if (!val) {

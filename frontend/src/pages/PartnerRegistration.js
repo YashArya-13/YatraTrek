@@ -23,7 +23,7 @@ const PartnerRegistration = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await api.post("users/register-camp/", formData);
+      await api.post("users/register-camp/", formData);
       setSuccess(true);
       // Auto-login or ask them to login
       setTimeout(() => {

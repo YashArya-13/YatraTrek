@@ -7,15 +7,14 @@ export default function Invoices() {
   const [invoices, setInvoices] = useState([]);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     fetchInvoices();
   }, []);
 
   const fetchInvoices = () => {
-    setLoading(true);
-    api.get("invoices/").then(res => setInvoices(res.data)).catch(() => { }).finally(() => setLoading(false));
+    api.get("invoices/").then(res => setInvoices(res.data)).catch(() => { });
   };
 
   const markPaid = async (id) => {

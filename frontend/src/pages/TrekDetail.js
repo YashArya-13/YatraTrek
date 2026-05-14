@@ -1,12 +1,10 @@
 import api from "../api";
 import Footer from "../components/Footer";
-import PublicNav from "../components/PublicNav";
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function TrekDetail() {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [trek, setTrek] = useState(null);
   const [loading, setLoading] = useState(true);

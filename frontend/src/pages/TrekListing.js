@@ -87,7 +87,6 @@ const TrekCard = ({ trek, delay }) => {
 
 export default function TrekListing() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
