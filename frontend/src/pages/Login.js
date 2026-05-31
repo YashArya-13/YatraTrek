@@ -28,7 +28,11 @@ const Login = () => {
       localStorage.setItem("refresh", res.data.refresh);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("username", res.data.username);
-      navigate("/dashboard");
+      if (res.data.role === "trekker") {
+        navigate("/bookings");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setError("AUTHENTICATION FAILURE: INVALID CREDENTIALS");
     } finally {

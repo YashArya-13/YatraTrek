@@ -6,22 +6,33 @@ const api = axios.create({
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem("access");
-  const url = config.url || "";
-
-  // Public endpoints that don't need auth
-  const isPublic = url.includes("login/")
-    || url.includes("public-lead")
-    || (url.includes("treks/") && config.method === "get" && !url.includes("dashboard/") && !url.includes("treks/admin/"))
-    || url.includes("treks/packages/")
-    || url.includes("treks/book/")
-    || url.includes("treks/booking/")
-    || url.includes("popular-cities");
-
-  if (token && !isPublic) {
+  if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
+
+api.interceptors.response.use(
+  response => response,
+  error => {
+    const originalRequest = error.config;
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      originalRequest.headers &&
+      originalRequest.headers.Authorization &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      delete originalRequest.headers.Authorization;
+      return api(originalRequest);
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

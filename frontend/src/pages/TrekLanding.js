@@ -96,6 +96,14 @@ export default function TrekLanding() {
       });
   }, [activeRegion]);
 
+  useEffect(() => {
+    if (window.location.hash === "#destinations") {
+      setTimeout(() => {
+        document.getElementById("destinations")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, []);
+
   const handleMouseMove = (e) => {
     if (window.innerWidth < 768) return;
     setMousePos({

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -23,43 +24,43 @@ const Footer = () => {
              <p style={{ color: "var(--text-secondary)", fontSize: "16px", lineHeight: 1.7, marginBottom: "32px" }}>
                 Forging the future of high-altitude adventure. We provide the intelligence and leadership required to scale the world's most formidable peaks.
              </p>
-             <div style={{ display: "flex", gap: "16px" }}>
-                {[
-                   { icon: "🌐", label: "Network" },
-                   { icon: "📸", label: "Visuals" },
-                   { icon: "🐦", label: "Signals" },
-                   { icon: "🎥", label: "Intel" }
-                ].map((s, i) => (
-                  <div key={i} style={{ width: 44, height: 44, borderRadius: "12px", background: "rgba(255,255,255,0.03)", border: "1px solid var(--glass-border)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "0.3s" }}>
-                     <span title={s.label}>{s.icon}</span>
-                  </div>
-                ))}
-             </div>
+              <div style={{ display: "flex", gap: "16px" }}>
+                 {[
+                    { icon: "🌐", label: "Network" },
+                    { icon: "📸", label: "Visuals" },
+                    { icon: "🐦", label: "Signals" },
+                    { icon: "🎥", label: "Intel" }
+                 ].map((s, i) => (
+                   <a href="#" key={i} className="social-icon-link" title={s.label}>
+                      <span>{s.icon}</span>
+                   </a>
+                 ))}
+              </div>
           </div>
           
           <div className="footer-links">
              <h4 className="text-overline" style={{ color: "#fff", marginBottom: "32px" }}>Expeditions</h4>
-             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+             <div style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "flex-start" }}>
                 {["Winter Summits", "Valley Crossings", "Base Camp Treks", "Glacial Routes", "Technical Climbs"].map(link => (
-                  <span key={link} style={{ color: "var(--text-muted)", fontSize: "14px", fontWeight: "700", cursor: "pointer", transition: "0.2s" }}>{link}</span>
+                  <Link to="/treks" key={link} className="footer-link-item">{link}</Link>
                 ))}
              </div>
           </div>
 
           <div className="footer-links">
              <h4 className="text-overline" style={{ color: "#fff", marginBottom: "32px" }}>Intelligence</h4>
-             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+             <div style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "flex-start" }}>
                 {["Safety Protocols", "Gear Architecture", "Satellite Tracking", "Weather Matrix", "Training Camps"].map(link => (
-                  <span key={link} style={{ color: "var(--text-muted)", fontSize: "14px", fontWeight: "700", cursor: "pointer", transition: "0.2s" }}>{link}</span>
+                  <Link to="/safety" key={link} className="footer-link-item">{link}</Link>
                 ))}
              </div>
           </div>
 
           <div className="footer-links">
              <h4 className="text-overline" style={{ color: "#fff", marginBottom: "32px" }}>Foundation</h4>
-             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+             <div style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "flex-start" }}>
                 {["Our Vision", "Impact 2026", "Leadership", "Press Office", "Carrier Hub"].map(link => (
-                  <span key={link} style={{ color: "var(--text-muted)", fontSize: "14px", fontWeight: "700", cursor: "pointer", transition: "0.2s" }}>{link}</span>
+                  <Link to="/about" key={link} className="footer-link-item">{link}</Link>
                 ))}
              </div>
           </div>
@@ -69,7 +70,7 @@ const Footer = () => {
           <p style={{ color: "rgba(255,255,255,0.2)", fontSize: "13px", fontWeight: 700 }}>© 2026 YatraTrek HQ // All Operations Protected by Blockchain Encryption.</p>
           <div style={{ display: "flex", gap: "clamp(20px, 4vw, 40px)", flexWrap: "wrap" }}>
              {["Privacy Protocol", "Terms of Engagement", "Safety Charter"].map(item => (
-               <span key={item} style={{ color: "rgba(255,255,255,0.2)", fontSize: "13px", fontWeight: 700, cursor: "pointer", transition: "0.2s" }}>{item}</span>
+               <Link to="/safety" key={item} className="footer-bottom-link">{item}</Link>
              ))}
           </div>
        </div>
@@ -84,6 +85,15 @@ const Footer = () => {
            .grid-cols-4 { grid-template-columns: 1fr; }
            .grid-cols-4 > div:first-child { grid-column: span 1; --col-span: 1; }
          }
+         
+         .social-icon-link { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; text-decoration: none; color: inherit; }
+         .social-icon-link:hover { background: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.3); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(249,115,22,0.2); }
+         
+         .footer-link-item { color: var(--text-muted); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-decoration: none; display: inline-block; }
+         .footer-link-item:hover { color: var(--accent-primary); transform: translateX(5px); }
+         
+         .footer-bottom-link { color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; text-decoration: none; }
+         .footer-bottom-link:hover { color: #fff; }
        `}</style>
     </footer>
   );

@@ -82,17 +82,23 @@ class BookingSerializer(serializers.ModelSerializer):
     camp_name = serializers.CharField(source='package.camp.name', read_only=True, default='Unassigned')
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     payment_display = serializers.CharField(source='get_payment_status_display', read_only=True)
+    invoice_details = serializers.SerializerMethodField()
+    trek_city = serializers.CharField(source='trek.region', read_only=True)
+    room_type = serializers.CharField(source='package.get_package_type_display', read_only=True)
+    nights = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
         fields = [
-            'id', 'booking_ref', 'trek', 'trek_name', 'trek_region', 'trek_image',
+            'id', 'booking_ref', 'user', 'trek', 'trek_name', 'trek_region', 'trek_image',
+            'trek_city', 'room_type', 'nights',
             'package', 'package_type', 'camp_name',
             'guest_lead', 'guest_name', 'guest_email', 'guest_phone',
             'check_in', 'check_out', 'trekkers_count',
             'total_price',
             'status', 'status_display', 'payment_status', 'payment_display',
             'special_requests', 'created_at',
+            'invoice_details',
         ]
         read_only_fields = [
             'booking_ref', 'total_price', 'created_at',
@@ -101,6 +107,31 @@ class BookingSerializer(serializers.ModelSerializer):
     def get_trek_image(self, obj):
         images = obj.trek.images
         return images[0] if images else ''
+
+    def get_nights(self, obj):
+        if obj.check_in and obj.check_out:
+            return (obj.check_out - obj.check_in).days
+        return 0
+
+    def get_invoice_details(self, obj):
+        from invoices.models import Invoice
+        try:
+            if obj.guest_lead:
+                invoice = Invoice.objects.filter(quotation__customer=obj.guest_lead).first()
+                if invoice:
+                    return {
+                        'id': invoice.id,
+                        'invoice_no': f"INV-{str(invoice.id).zfill(4)}",
+                        'subtotal': invoice.subtotal,
+                        'gst_rate': invoice.gst_rate,
+                        'gst_amount': invoice.gst_amount,
+                        'total': invoice.total,
+                        'status': invoice.status,
+                        'created_at': invoice.created_at.strftime('%Y-%m-%d')
+                    }
+        except Exception:
+            pass
+        return None
 
 
 class CreateBookingSerializer(serializers.Serializer):

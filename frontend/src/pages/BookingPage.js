@@ -19,6 +19,11 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [guest, setGuest] = useState({ name: "", email: "", phone: "", requests: "", trekkers: 1 });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("access"));
+  const [authMode, setAuthMode] = useState("login"); // "login" or "signup"
+  const [authForm, setAuthForm] = useState({ username: "", email: "", password: "" });
+  const [authError, setAuthError] = useState("");
+
   useEffect(() => {
     if (!trekId || !roomId) {
       console.error("Missing trekId or roomId");
@@ -49,6 +54,22 @@ export default function BookingPage() {
     });
   }, [trekId, roomId, navigate, dates.checkIn, searchParams]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      api.get("users/me/")
+        .then(r => {
+          setGuest(g => ({
+            ...g,
+            name: r.data.username,
+            email: r.data.email
+          }));
+        })
+        .catch(err => {
+          console.error("Error fetching user info:", err);
+        });
+    }
+  }, [isLoggedIn]);
+
   const handleStartDateChange = (val) => {
     if (!val) {
       setDates({ checkIn: "", checkOut: "" });
@@ -65,6 +86,39 @@ export default function BookingPage() {
       checkIn: val,
       checkOut: end.toISOString().split('T')[0]
     });
+  };
+
+  const handleAuthSubmit = async (e) => {
+    e.preventDefault();
+    setAuthError("");
+    try {
+      if (authMode === "login") {
+        const res = await api.post("users/login/", {
+          username: authForm.username,
+          password: authForm.password
+        });
+        localStorage.setItem("access", res.data.access);
+        localStorage.setItem("refresh", res.data.refresh);
+        localStorage.setItem("role", res.data.role);
+        localStorage.setItem("username", res.data.username);
+        setIsLoggedIn(true);
+        toast.success("Connection Established!");
+      } else {
+        const res = await api.post("users/register-trekker/", {
+          username: authForm.username,
+          email: authForm.email,
+          password: authForm.password
+        });
+        localStorage.setItem("access", res.data.access);
+        localStorage.setItem("refresh", res.data.refresh);
+        localStorage.setItem("role", res.data.role);
+        localStorage.setItem("username", res.data.username);
+        setIsLoggedIn(true);
+        toast.success("Account Created & Connected!");
+      }
+    } catch (err) {
+      setAuthError(err.response?.data?.error || "Authentication failure. Please try again.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -100,55 +154,112 @@ export default function BookingPage() {
       <div style={{ maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 450px", gap: "80px" }}>
         
         <div style={{ animation: "revealUp 0.8s ease-out" }}>
-          <h1 style={{ fontSize: "48px", fontWeight: 950, letterSpacing: "-2.5px", marginBottom: "40px" }}>Reserve Your <br /><span style={{ color: "#f97316" }}>Expedition Slots</span></h1>
-          
-          <form onSubmit={handleSubmit} style={{ display: "grid", gap: "24px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "20px" }}>
-              <div>
-                <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Expedition Start Date</label>
-                <input required type="date" value={dates.checkIn} onChange={e => handleStartDateChange(e.target.value)} style={inputStyle} />
-              </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-              <div>
-                <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Lead Trekker Name</label>
-                <input required placeholder="Your full name" value={guest.name} onChange={e => setGuest({...guest, name: e.target.value})} style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Phone Number</label>
-                <input required placeholder="+91" value={guest.phone} onChange={e => setGuest({...guest, phone: e.target.value})} style={inputStyle} />
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
-              <div>
-                <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Email Address</label>
-                <input required type="email" placeholder="email@example.com" value={guest.email} onChange={e => setGuest({...guest, email: e.target.value})} style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>No. of Trekkers</label>
-                <input required type="number" min="1" max="10" value={guest.trekkers} onChange={e => setGuest({...guest, trekkers: parseInt(e.target.value)})} style={inputStyle} />
-              </div>
-            </div>
+          {!isLoggedIn ? (
             <div>
-              <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Medical & Dietary Notes</label>
-              <textarea placeholder="Any medical conditions or food allergies?" rows={4} value={guest.requests} onChange={e => setGuest({...guest, requests: e.target.value})} style={{ ...inputStyle, borderRadius: "20px", resize: "none" }} />
-            </div>
+              <h1 style={{ fontSize: "48px", fontWeight: 950, letterSpacing: "-2.5px", marginBottom: "20px" }}>
+                Establish <span style={{ color: "#f97316" }}>Connection</span>
+              </h1>
+              <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "40px", fontSize: "15px" }}>
+                Please login or create a trekker account to secure your high-altitude booking and access digital invoices.
+              </p>
+              
+              <div style={{ display: "flex", gap: "20px", marginBottom: "30px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "10px" }}>
+                <span 
+                  onClick={() => { setAuthMode("login"); setAuthError(""); }}
+                  style={{ fontSize: "16px", fontWeight: "900", cursor: "pointer", color: authMode === "login" ? "#f97316" : "rgba(255,255,255,0.4)", borderBottom: authMode === "login" ? "2px solid #f97316" : "none", paddingBottom: "8px", transition: "0.3s" }}
+                >COMMAND LOGIN</span>
+                <span 
+                  onClick={() => { setAuthMode("signup"); setAuthError(""); }}
+                  style={{ fontSize: "16px", fontWeight: "900", cursor: "pointer", color: authMode === "signup" ? "#f97316" : "rgba(255,255,255,0.4)", borderBottom: authMode === "signup" ? "2px solid #f97316" : "none", paddingBottom: "8px", transition: "0.3s" }}
+                >TREKKER REGISTRATION</span>
+              </div>
 
-            <div style={{ marginTop: "20px", padding: "24px", borderRadius: "20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", fontSize: "13px", color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
-               By confirming, you certify that all trekkers are physically fit for high-altitude activities. 
-               <br /><br />
-               <strong style={{ color: "#fff" }}>Gear rental can be handled at the base camp.</strong>
-            </div>
+              {authError && (
+                <div style={{ background: "rgba(239, 68, 68, 0.1)", borderLeft: "4px solid #ef4444", padding: "16px", color: "#ef4444", fontWeight: 800, fontSize: "13px", marginBottom: "24px", borderRadius: "8px" }}>
+                  ⚠️ {authError}
+                </div>
+              )}
 
-            <button disabled={submitting} type="submit" style={{ 
-              background: "#f97316", color: "#fff", border: "none", padding: "20px", 
-              borderRadius: "20px", fontSize: "16px", fontWeight: "900", cursor: submitting ? "not-allowed" : "pointer",
-              transition: "0.3s", boxShadow: "0 20px 40px rgba(249,115,22,0.2)"
-            }}>
-              {submitting ? "PROCESSING..." : "CONFIRM EXPEDITION"}
-            </button>
-          </form>
+              <form onSubmit={handleAuthSubmit} style={{ display: "grid", gap: "20px" }}>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Username</label>
+                  <input required placeholder="Enter username" value={authForm.username} onChange={e => setAuthForm({...authForm, username: e.target.value})} style={inputStyle} />
+                </div>
+
+                {authMode === "signup" && (
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Email Address</label>
+                    <input required type="email" placeholder="email@example.com" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} style={inputStyle} />
+                  </div>
+                )}
+
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Security Token (Password)</label>
+                  <input required type="password" placeholder="••••••••" value={authForm.password} onChange={e => setAuthForm({...authForm, password: e.target.value})} style={inputStyle} />
+                </div>
+
+                <button type="submit" style={{ 
+                  background: "#f97316", color: "#fff", border: "none", padding: "18px", 
+                  borderRadius: "15px", fontSize: "15px", fontWeight: "900", cursor: "pointer",
+                  transition: "0.3s", boxShadow: "0 10px 25px rgba(249,115,22,0.2)", marginTop: "10px"
+                }}>
+                  {authMode === "login" ? "ESTABLISH UPLINK" : "CREATE ACCOUNT & CONNECT"}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div>
+              <h1 style={{ fontSize: "48px", fontWeight: 950, letterSpacing: "-2.5px", marginBottom: "40px" }}>Reserve Your <br /><span style={{ color: "#f97316" }}>Expedition Slots</span></h1>
+              
+              <form onSubmit={handleSubmit} style={{ display: "grid", gap: "24px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "20px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Expedition Start Date</label>
+                    <input required type="date" value={dates.checkIn} onChange={e => handleStartDateChange(e.target.value)} style={inputStyle} />
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Lead Trekker Name</label>
+                    <input required placeholder="Your full name" value={guest.name} onChange={e => setGuest({...guest, name: e.target.value})} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Phone Number</label>
+                    <input required placeholder="+91" value={guest.phone} onChange={e => setGuest({...guest, phone: e.target.value})} style={inputStyle} />
+                  </div>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Email Address</label>
+                    <input required type="email" placeholder="email@example.com" value={guest.email} onChange={e => setGuest({...guest, email: e.target.value})} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>No. of Trekkers</label>
+                    <input required type="number" min="1" max="10" value={guest.trekkers} onChange={e => setGuest({...guest, trekkers: parseInt(e.target.value)})} style={inputStyle} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", color: "rgba(255,255,255,0.4)", display: "block", marginBottom: "10px" }}>Medical & Dietary Notes</label>
+                  <textarea placeholder="Any medical conditions or food allergies?" rows={4} value={guest.requests} onChange={e => setGuest({...guest, requests: e.target.value})} style={{ ...inputStyle, borderRadius: "20px", resize: "none" }} />
+                </div>
+
+                <div style={{ marginTop: "20px", padding: "24px", borderRadius: "20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", fontSize: "13px", color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
+                   By confirming, you certify that all trekkers are physically fit for high-altitude activities. 
+                   <br /><br />
+                   <strong style={{ color: "#fff" }}>Gear rental can be handled at the base camp.</strong>
+                </div>
+
+                <button disabled={submitting} type="submit" style={{ 
+                  background: "#f97316", color: "#fff", border: "none", padding: "20px", 
+                  borderRadius: "20px", fontSize: "16px", fontWeight: "900", cursor: submitting ? "not-allowed" : "pointer",
+                  transition: "0.3s", boxShadow: "0 20px 40px rgba(249,115,22,0.2)"
+                }}>
+                  {submitting ? "PROCESSING..." : "CONFIRM EXPEDITION"}
+                </button>
+              </form>
+            </div>
+          )}
         </div>
 
         <aside style={{ animation: "revealUp 0.8s ease-out 0.2s both" }}>

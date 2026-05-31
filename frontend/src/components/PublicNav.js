@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const PublicNav = ({ activeItem }) => {
   const navigate = useNavigate();
@@ -30,30 +30,28 @@ const PublicNav = ({ activeItem }) => {
       {/* Desktop Menu */}
       <div className="nav-links desktop-only" style={{ display: "flex", gap: "40px" }}>
         {["Expeditions", "About", "Safety", "Journal", "Partner"].map(item => (
-          <span 
+          <Link 
             key={item} 
+            to={
+                item === "Expeditions" ? "/#destinations" :
+                item === "Partner" ? "/partner-registration" :
+                `/${item.toLowerCase()}`
+            }
             className="nav-link"
             style={{ 
                 fontSize: "12px", fontWeight: "800", 
                 color: item.toLowerCase() === activeItem?.toLowerCase() ? "#fff" : "rgba(255,255,255,0.5)", 
-                cursor: "pointer", transition: "0.3s", textTransform: "uppercase", letterSpacing: "1.5px" 
+                cursor: "pointer", transition: "0.3s", textTransform: "uppercase", letterSpacing: "1.5px", textDecoration: "none"
             }} 
-            onClick={() => {
-              if (item === "Expeditions") {
-                  if (window.location.pathname === "/") {
-                      document.getElementById("expeditions")?.scrollIntoView({ behavior: "smooth" });
-                  } else {
-                      navigate("/#expeditions");
-                  }
-              } else if (item === "Partner") {
-                  navigate("/partner-registration");
-              } else {
-                  navigate(`/${item.toLowerCase()}`);
+            onClick={(e) => {
+              if (item === "Expeditions" && window.location.pathname === "/") {
+                  e.preventDefault();
+                  document.getElementById("destinations")?.scrollIntoView({ behavior: "smooth" });
               }
             }}
           >
             {item}
-          </span>
+          </Link>
         ))}
       </div>
 
@@ -92,27 +90,25 @@ const PublicNav = ({ activeItem }) => {
         transform: isMobileMenuOpen ? "translateY(0)" : "translateY(-10px)"
       }}>
         {["Expeditions", "About", "Safety", "Journal", "Partner"].map(item => (
-          <span 
+          <Link 
             key={item} 
+            to={
+                item === "Expeditions" ? "/#destinations" :
+                item === "Partner" ? "/partner-registration" :
+                `/${item.toLowerCase()}`
+            }
             className="display-3"
-            style={{ color: "#fff", cursor: "pointer" }}
-            onClick={() => {
-              if (item === "Expeditions") {
-                if (window.location.pathname === "/") {
-                  document.getElementById("expeditions")?.scrollIntoView({ behavior: "smooth" });
-                } else {
-                  navigate("/#expeditions");
-                }
-              } else if (item === "Partner") {
-                navigate("/partner-registration");
-              } else {
-                navigate(`/${item.toLowerCase()}`);
+            style={{ color: "#fff", cursor: "pointer", textDecoration: "none" }}
+            onClick={(e) => {
+              if (item === "Expeditions" && window.location.pathname === "/") {
+                e.preventDefault();
+                document.getElementById("destinations")?.scrollIntoView({ behavior: "smooth" });
               }
               setIsMobileMenuOpen(false);
             }}
           >
             {item}
-          </span>
+          </Link>
         ))}
         <button 
           className="btn btn-primary" 

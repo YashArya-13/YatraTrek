@@ -111,3 +111,36 @@ def register_camp_owner(request):
         "username": user.username,
         "message": "Camp Owner registered successfully"
     }, status=201)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_trekker(request):
+    """Register a new individual trekker/user."""
+    data = request.data
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email')
+
+    if not username or not password or not email:
+        return Response({'error': 'Username, password, and email are required.'}, status=400)
+
+    if User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already taken'}, status=400)
+
+    # Create the User
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password,
+        role='trekker'
+    )
+
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+        "role": user.role,
+        "username": user.username,
+        "message": "User registered successfully"
+    }, status=201)

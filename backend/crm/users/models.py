@@ -7,6 +7,7 @@ class User(AbstractUser):
         ('manager', 'Manager'),
         ('sales', 'Sales'),
         ('camp_leader', 'Camp Leader'),
+        ('trekker', 'Trekker'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='sales')
     camp = models.ForeignKey('treks.Camp', on_delete=models.SET_NULL, null=True, blank=True, related_name='leaders')

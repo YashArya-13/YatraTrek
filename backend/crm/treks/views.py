@@ -136,7 +136,51 @@ def create_booking(request):
         status='confirmed',
         payment_status='paid',
     )
+    if request.user and request.user.is_authenticated:
+        booking.user = request.user
     booking.save()
+
+    # Automatically generate Quotation & Invoice
+    try:
+        from quotations.models import Quotation, QuotationItem
+        from invoices.models import Invoice
+        from products.models import Product
+
+        # Try to find or create a product representing this trek package
+        product, _ = Product.objects.get_or_create(
+            name=f"{trek.name} - {package.get_package_type_display()}",
+            defaults={
+                'price': package.price_per_person,
+                'description': f"Expedition package for {trek.name}",
+                'category': 'trek_package',
+                'camp': package.camp
+            }
+        )
+
+        quotation = Quotation.objects.create(
+            customer=lead,
+            camp=package.camp,
+            notes=f"Automatically generated for booking {booking.booking_ref}"
+        )
+
+        QuotationItem.objects.create(
+            quotation=quotation,
+            product=product,
+            quantity=booking.trekkers_count,
+            unit_price=package.price_per_person
+        )
+        quotation.recalculate_total()
+
+        Invoice.objects.create(
+            quotation=quotation,
+            subtotal=quotation.subtotal,
+            gst_rate=quotation.gst_rate,
+            gst_amount=quotation.gst_amount,
+            total=quotation.total,
+            status='paid'
+        )
+    except Exception as e:
+        print(f"Error creating automatic invoice: {e}")
 
     return Response(BookingSerializer(booking).data, status=201)
 
@@ -230,6 +274,9 @@ class BookingAdminViewSet(ModelViewSet):
         if user.role == 'camp_leader' and user.camp:
             # Camp leaders only see bookings for their own camp
             return qs.filter(package__camp=user.camp)
+        elif user.role == 'trekker':
+            # Trekkers only see their own bookings
+            return qs.filter(Q(user=user) | Q(guest_email=user.email))
         
         # Admin/Managers see everything
         return qs

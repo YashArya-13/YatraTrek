@@ -217,7 +217,8 @@ class QuotationViewSet(ModelViewSet):
         # Check if SMTP is configured
         from django.conf import settings as django_settings
         email_backend = getattr(django_settings, 'EMAIL_BACKEND', '')
-        if 'console' in email_backend:
+        email_user = getattr(django_settings, 'EMAIL_HOST_USER', '')
+        if 'console' in email_backend or not email_user:
             return Response({
                 'error': 'not_configured',
                 'message': (

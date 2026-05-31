@@ -141,6 +141,8 @@ class Booking(models.Model):
     package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='bookings')
     guest_lead = models.ForeignKey('leads.Lead', on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='bookings')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='bookings')
     guest_name = models.CharField(max_length=255)
     guest_email = models.EmailField()
     guest_phone = models.CharField(max_length=20, blank=True, default='')

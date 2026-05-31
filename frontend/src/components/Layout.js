@@ -10,18 +10,22 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { name: "Mission Control", path: "/dashboard", icon: "🚀", role: "admin" },
-    { name: "Expeditions", path: "/trek-dashboard", icon: "🏔️" },
-    { name: "Bookings", path: "/bookings", icon: "📅" },
-    { name: "Lead Pipeline", path: "/leads", icon: "🎯" },
-    { name: "Trekkers", path: "/trekkers", icon: "👤" },
-    { name: "Inventory", path: "/products", icon: "📦" },
-    { name: "Quotations", path: "/quotations", icon: "📄" },
-    { name: "Revenue", path: "/revenue", icon: "💰" },
-    { name: "Operational Log", path: "/tasks", icon: "📝" },
+    { name: "Expeditions", path: "/trek-dashboard", icon: "🏔️", roles: ["admin", "manager", "camp_leader"] },
+    { name: userRole === "trekker" ? "My Bookings" : "Bookings", path: "/bookings", icon: "📅", roles: ["admin", "manager", "sales", "camp_leader", "trekker"] },
+    { name: "Lead Pipeline", path: "/leads", icon: "🎯", roles: ["admin", "manager", "sales"] },
+    { name: "Trekkers", path: "/trekkers", icon: "👤", roles: ["admin", "manager", "sales"] },
+    { name: "Inventory", path: "/products", icon: "📦", roles: ["admin", "manager", "camp_leader"] },
+    { name: "Quotations", path: "/quotations", icon: "📄", roles: ["admin", "manager", "sales"] },
+    { name: "Revenue", path: "/revenue", icon: "💰", roles: ["admin", "manager"] },
+    { name: "Operational Log", path: "/tasks", icon: "📝", roles: ["admin", "manager", "camp_leader", "sales"] },
     { name: "Access Control", path: "/users", icon: "🛡️", role: "admin" },
   ];
 
-  const filteredNav = navItems.filter(item => !item.role || item.role === userRole);
+  const filteredNav = navItems.filter(item => {
+    if (item.role && item.role !== userRole) return false;
+    if (item.roles && !item.roles.includes(userRole)) return false;
+    return true;
+  });
 
   const handleLogout = () => {
     localStorage.clear();
